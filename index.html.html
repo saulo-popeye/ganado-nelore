@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<!-- saved from url=(0054)file:///C:/Users/hp%20victus/Downloads/code%20(4).html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seguimiento Ganado Nelore</title>
+<style>
+  /* Reset and base */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(120deg, #a8d5ba, #5a9a65);
+    color: #2a2a2a;
+    margin: 0; padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #114b27;
+  }
+  header h1 {
+    font-size: 2.8rem;
+    margin-bottom: 5px;
+    text-shadow: 1px 1px 3px #234d32cc;
+  }
+  header p {
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+  main {
+    background: #fffefaee;
+    max-width: 1070px;
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(54,70,42,0.5);
+    padding: 25px 30px;
+  }
+  form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 25px;
+    align-items: flex-end;
+  }
+  label {
+    flex: 1 1 180px;
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  input, select {
+    margin-top: 6px;
+    padding: 8px 12px;
+    font-size: 1rem;
+    border: 2px solid #699f69;
+    border-radius: 6px;
+    transition: border-color 0.3s;
+    outline-offset: 2px;
+  }
+  input:focus, select:focus {
+    border-color: #3b692b;
+  }
+  button {
+    background-color: #3b692b;
+    color: #fff;
+    padding: 11px 22px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    font-weight: 700;
+    box-shadow: 1px 3px 7px #2d4e1c99;
+    transition: background-color 0.3s ease;
+    flex: 1 1 120px;
+    min-width: 120px;
+  }
+  button:hover {
+    background-color: #2d4e1c;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: inset 0 0 10px #ccccccb3;
+  }
+  thead {
+    background-color: #5a9a65cc;
+    color: white;
+  }
+  th, td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 2px solid #cee5cd;
+  }
+  tbody tr:nth-child(even) {
+    background-color: #f6f9f6;
+  }
+  caption {
+    text-align: left;
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+    color: #2a5d2a;
+  }
+  .empty-state {
+    text-align: center;
+    color: #617b61;
+    font-style: italic;
+    padding: 18px 0;
+  }
+  footer {
+    margin-top: 35px;
+    color: #3b692b;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Seguimiento de Ganado Nelore</h1>
+  <p>Controla el engorde de tus animales fácilmente</p>
+</header>
+<main>
+  <form id="registroGanadoForm" aria-label="Formulario para registrar un animal">
+    <label for="razaSelect">
+      Raza:
+      <select id="razaSelect" required="">
+        <option value="">--Selecciona--</option>
+        <option value="Nelore">Nelore</option>
+        <option value="Nelore cruzado">Nelore cruzado</option>
+        <option value="Mestiza">Mestiza</option>
+        <option value="Gir Orlando">Gir Orlando</option>
+      </select>
+    </label>
+    <label for="pesoInput">
+      Peso (kg) con el que llegó:
+      <input type="number" id="pesoInput" min="1" max="2000" step="0.01" required="" placeholder="Ejemplo: 200.00">
+    </label>
+    <label for="fechaLlegadaInput">
+      Fecha de llegada:
+      <input type="date" id="fechaLlegadaInput" required="" max="2025-05-27">
+    </label>
+    <label for="fechaSalidaInput">
+      Fecha de salida:
+      <input type="date" id="fechaSalidaInput" max="2025-05-27">
+      <small style="font-weight:400; font-size:0.8rem; color:#3b692bcc; margin-top:2px;">Opcional, si no indica se calcula hasta hoy</small>
+    </label>
+    <label for="precioKiloInput">
+      Precio por kilo (Bs):
+      <input type="text" id="precioKiloInput" required="" placeholder="Ejemplo: 15,76">
+    </label>
+    <button type="submit" aria-label="Agregar animal al seguimiento">Agregar</button>
+  </form>
+
+  <table aria-live="polite" aria-describedby="tablaDescripcion" role="grid">
+    <caption id="tablaDescripcion">Listado de animales registrados</caption>
+    <thead>
+      <tr>
+        <th scope="col">Raza</th>
+        <th scope="col">Peso inicial (kg)</th>
+        <th scope="col">Fecha llegada</th>
+        <th scope="col">Fecha salida</th>
+        <th scope="col">Meses en engorde</th>
+        <th scope="col">Peso ganado (kg)</th>
+        <th scope="col">Precio aproximado ganado (Bs)</th>
+        <th scope="col">Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="ganadoTableBody"><tr>
+        <td>Nelore</td>
+        <td>358.70</td>
+        <td>11 de marzo de 2025</td>
+        <td>26 de mayo de 2025</td>
+        <td>2</td>
+        <td>24.00</td>
+        <td>Bs 346,08</td>
+        <td><button aria-label="Eliminar animal Nelore, peso 358.7 kg" class="btnEliminar">Eliminar</button></td>
+      </tr><tr>
+        <td>Nelore</td>
+        <td>215.00</td>
+        <td>9 de enero de 2025</td>
+        <td>26 de mayo de 2025</td>
+        <td>4</td>
+        <td>48.00</td>
+        <td>Bs 724,80</td>
+        <td><button aria-label="Eliminar animal Nelore, peso 215 kg" class="btnEliminar">Eliminar</button></td>
+      </tr><tr>
+        <td>Nelore</td>
+        <td>215.00</td>
+        <td>10 de febrero de 2025</td>
+        <td>26 de mayo de 2025</td>
+        <td>3</td>
+        <td>36.00</td>
+        <td>Bs 543,60</td>
+        <td><button aria-label="Eliminar animal Nelore, peso 215 kg" class="btnEliminar">Eliminar</button></td>
+      </tr><tr>
+        <td>Nelore cruzado</td>
+        <td>345.00</td>
+        <td>13 de enero de 2025</td>
+        <td>26 de mayo de 2025</td>
+        <td>4</td>
+        <td>48.00</td>
+        <td>Bs 724,80</td>
+        <td><button aria-label="Eliminar animal Nelore cruzado, peso 345 kg" class="btnEliminar">Eliminar</button></td>
+      </tr></tbody>
+  </table>
+</main>
+<footer>
+  <p>Engorde basado en pastaje, agua y sal – Seguimiento generado por tu app de ganadería</p>
+</footer>
+
+<script>
+  "use strict";
+
+  const form = document.getElementById('registroGanadoForm');
+  const razaSelect = document.getElementById('razaSelect');
+  const pesoInput = document.getElementById('pesoInput');
+  const fechaLlegadaInput = document.getElementById('fechaLlegadaInput');
+  const fechaSalidaInput = document.getElementById('fechaSalidaInput');
+  const precioKiloInput = document.getElementById('precioKiloInput');
+  const ganadoTableBody = document.getElementById('ganadoTableBody');
+
+  // Ajuste máximos de fechas a hoy
+  const hoy = new Date().toISOString().split('T')[0];
+  fechaLlegadaInput.setAttribute('max', hoy);
+  fechaSalidaInput.setAttribute('max', hoy);
+
+  // Arreglo para almacenar animales
+  let animales = [];
+
+  // Cargar animales de localStorage
+  function cargarAnimales() {
+    const data = localStorage.getItem('animalesGanadoNelore');
+    if (data) {
+      try {
+        animales = JSON.parse(data);
+      } catch(e) {
+        console.error('Error parsing JSON localStorage:', e);
+        animales = [];
+      }
+    } else {
+      animales = [];
+    }
+  }
+
+  // Guardar animales en localStorage
+  function guardarAnimales() {
+    localStorage.setItem('animalesGanadoNelore', JSON.stringify(animales));
+  }
+
+  // Calcula meses completos entre dos fechas (fechaInicio y fechaFin)
+  function calcularMeses(fechaInicioStr, fechaFinStr) {
+    let inicio = new Date(fechaInicioStr);
+    let fin = fechaFinStr ? new Date(fechaFinStr) : new Date();
+
+    let meses = (fin.getFullYear() - inicio.getFullYear()) * 12;
+    meses += fin.getMonth() - inicio.getMonth();
+    if (fin.getDate() < inicio.getDate()) {
+      meses -= 1;
+    }
+    return meses < 0 ? 0 : meses;
+  }
+
+  // Calcula peso ganado basado en 60kg cada 4-5 meses
+  function calcularPesoGanado(meses) {
+    return (meses / 5) * 60; // 60 kilos cada 4-5 meses
+  }
+
+  // Calcula precio aproximado según peso ganado
+  function calcularPrecioGanado(pesoGanado, precioPorKilo) {
+    return pesoGanado * precioPorKilo;
+  }
+
+  // Actualiza la tabla con los animales actuales
+  function actualizarTabla() {
+    ganadoTableBody.innerHTML = '';
+
+    if (animales.length === 0) {
+      const tr = document.createElement('tr');
+      tr.classList.add('empty-state');
+      const td = document.createElement('td');
+      td.setAttribute('colspan', '8');
+      td.textContent = 'No hay animales registrados aún.';
+      tr.appendChild(td);
+      ganadoTableBody.appendChild(tr);
+      return;
+    }
+
+    animales.forEach((animal, index) => {
+      const tr = document.createElement('tr');
+
+      const meses = calcularMeses(animal.fechaLlegada, animal.fechaSalida);
+      const pesoGanado = calcularPesoGanado(meses);
+      const precio = calcularPrecioGanado(pesoGanado, animal.precioPorKilo);
+
+      const formatFechaLlegada = new Date(animal.fechaLlegada).toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      const formatFechaSalida = animal.fechaSalida ? new Date(animal.fechaSalida).toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }) : 'En engorde';
+
+      tr.innerHTML = `
+        <td>${animal.raza}</td>
+        <td>${animal.pesoInicial.toFixed(2)}</td>
+        <td>${formatFechaLlegada}</td>
+        <td>${formatFechaSalida}</td>
+        <td>${meses}</td>
+        <td>${pesoGanado.toFixed(2)}</td>
+        <td>Bs ${precio.toFixed(2).replace('.', ',')}</td>
+        <td><button aria-label="Eliminar animal ${animal.raza}, peso ${animal.pesoInicial} kg" class="btnEliminar">Eliminar</button></td>
+      `;
+
+      tr.querySelector('.btnEliminar').addEventListener('click', () => {
+        if(window.confirm(`¿Eliminar el registro del animal de raza "${animal.raza}" con peso inicial ${animal.pesoInicial.toFixed(2)} kg?`)) {
+          animales.splice(index, 1);
+          guardarAnimales();
+          actualizarTabla();
+        }
+      });
+
+      ganadoTableBody.appendChild(tr);
+    });
+  }
+
+  // Evento submit para agregar animal
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+
+    const raza = razaSelect.value.trim();
+    const peso = parseFloat(pesoInput.value);
+    const fechaLlegada = fechaLlegadaInput.value;
+    const fechaSalida = fechaSalidaInput.value || null;
+    const precioPorKiloStr = precioKiloInput.value.replace(',', '.'); // Reemplazar coma por punto
+    const precioPorKilo = parseFloat(precioPorKiloStr);
+
+    if(!raza) {
+      alert('Por favor selecciona la raza del animal.');
+      return;
+    }
+    if(isNaN(peso) || peso <= 0) {
+      alert('Ingresa un peso válido mayor que cero.');
+      return;
+    }
+    if(!fechaLlegada) {
+      alert('Indica la fecha de llegada del animal.');
+      return;
+    }
+    if(new Date(fechaLlegada) > new Date()) {
+      alert('La fecha de llegada no puede ser futura.');
+      return;
+    }
+    if(fechaSalida) {
+      if(new Date(fechaSalida) > new Date()) {
+        alert('La fecha de salida no puede ser futura.');
+        return;
+      }
+      if(new Date(fechaSalida) < new Date(fechaLlegada)) {
+        alert('La fecha de salida no puede ser anterior a la fecha de llegada.');
+        return;
+      }
+    }
+    if(isNaN(precioPorKilo) || precioPorKilo <= 0) {
+      alert('Ingresa un precio por kilo válido mayor que cero.');
+      return;
+    }
+
+    animales.push({
+      raza: raza,
+      pesoInicial: peso,
+      fechaLlegada: fechaLlegada,
+      fechaSalida: fechaSalida,
+      precioPorKilo: precioPorKilo
+    });
+    guardarAnimales();
+
+    form.reset();
+    // Reset max attributes (fechaLlegadaInput max is today)
+    fechaLlegadaInput.setAttribute('max', hoy);
+    fechaSalidaInput.setAttribute('max', hoy);
+
+    actualizarTabla();
+
+    alert('Animal agregado correctamente.');
+  });
+
+  // Inicialización
+  function init() {
+    cargarAnimales();
+    actualizarTabla();
+  }
+
+  init();
+</script>
+
+
+</body></html>
